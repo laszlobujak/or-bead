@@ -1,4 +1,4 @@
-import java.net.Socket;
+import java.io.PrintWriter;
 
 public class CurrentPlay {
     private static int idCounter = 0;
@@ -7,7 +7,7 @@ public class CurrentPlay {
     private int transpose;
     private int tempo;
     private volatile boolean stopped;
-    private Socket socket;
+    private PrintWriter out;
 
     public boolean isStopped() {
         return stopped;
@@ -17,17 +17,20 @@ public class CurrentPlay {
         this.stopped = stopped;
     }
 
-    public CurrentPlay(int tempo, int transpose, Song song, Socket socket) {
+    public CurrentPlay(int tempo, int transpose, Song song, PrintWriter out) {
         this.song = song;
-        this.id = idCounter++;
+        this.id = idCounter;
         this.transpose = transpose;
-        this.socket = socket;
+        this.out = out;
         this.tempo = tempo;
         this.stopped = false;
+        synchronized (this) {
+            idCounter++;
+        }
     }
 
-    public Socket getSocket() {
-        return this.socket;
+    public PrintWriter getPrintWriter() {
+        return this.out;
     }
 
     public Song getSong() {
